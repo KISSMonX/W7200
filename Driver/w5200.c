@@ -24,178 +24,177 @@ uint8 windowfull_retry_cnt[MAX_SOCK_NUM];
 
 uint8 incr_windowfull_retry_cnt(uint8 s)
 {
-  return windowfull_retry_cnt[s]++;
+        return windowfull_retry_cnt[s]++;
 }
 
 void init_windowfull_retry_cnt(uint8 s)
 {
-  windowfull_retry_cnt[s] = 0;
+        windowfull_retry_cnt[s] = 0;
 }
 
 uint16 pre_sent_ptr, sent_ptr;
 
 uint8 getISR(uint8 s)
 {
-  return I_STATUS[s];
+        return I_STATUS[s];
 }
 void putISR(uint8 s, uint8 val)
 {
-   I_STATUS[s] = val;
+        I_STATUS[s] = val;
 }
 uint16 getIINCHIP_RxMAX(uint8 s)
 {
-   return RSIZE[s];
+        return RSIZE[s];
 }
 uint16 getIINCHIP_TxMAX(uint8 s)
 {
-   return SSIZE[s];
+        return SSIZE[s];
 }
 uint16 getIINCHIP_RxMASK(uint8 s)
 {
-   return RMASK[s];
+        return RMASK[s];
 }
 uint16 getIINCHIP_TxMASK(uint8 s)
 {
-   return SMASK[s];
+        return SMASK[s];
 }
 uint16 getIINCHIP_RxBASE(uint8 s)
 {
-   return RBUFBASEADDRESS[s];
+        return RBUFBASEADDRESS[s];
 }
 uint16 getIINCHIP_TxBASE(uint8 s)
 {
-   return SBUFBASEADDRESS[s];
+        return SBUFBASEADDRESS[s];
 }
 void IINCHIP_CSoff(void)
 {
-  WIZ_CS(LOW);
+        WIZ_CS(LOW);
 }
 void IINCHIP_CSon(void)
 {
-  WIZ_CS(HIGH);
+        WIZ_CS(HIGH);
 }
 u8  IINCHIP_SpiSendData(uint8 dat)
 {
-  return(SPI1_SendByte(dat));
+        return(SPI1_SendByte(dat));
 }
 
 
- /**
+/**
 @brief  This function writes the data into W5200 registers.
 */
 
-uint8 IINCHIP_WRITE(uint16 addr,uint8 data)
+uint8 IINCHIP_WRITE(uint16 addr, uint8 data)
 {
-  IINCHIP_ISR_DISABLE();                      // Interrupt Service Routine Disable
+        IINCHIP_ISR_DISABLE();                      // Interrupt Service Routine Disable
 
-  //SPI MODE I/F
-  IINCHIP_CSoff();                            // CS=0, SPI start
+        //SPI MODE I/F
+        IINCHIP_CSoff();                            // CS=0, SPI start
 
-  IINCHIP_SpiSendData((addr & 0xFF00) >> 8);  // Address byte 1
-  IINCHIP_SpiSendData(addr & 0x00FF);         // Address byte 2
-  IINCHIP_SpiSendData(0x80);                  // Data write command and Write data length 1
-  IINCHIP_SpiSendData(0x01);                  // Write data length 2
-  IINCHIP_SpiSendData(data);                  // Data write (write 1byte data)
+        IINCHIP_SpiSendData((addr & 0xFF00) >> 8);  // Address byte 1
+        IINCHIP_SpiSendData(addr & 0x00FF);         // Address byte 2
+        IINCHIP_SpiSendData(0x80);                  // Data write command and Write data length 1
+        IINCHIP_SpiSendData(0x01);                  // Write data length 2
+        IINCHIP_SpiSendData(data);                  // Data write (write 1byte data)
 
-  IINCHIP_CSon();                             // CS=1,  SPI end
+        IINCHIP_CSon();                             // CS=1,  SPI end
 
-  IINCHIP_ISR_ENABLE();                       // Interrupt Service Routine Enable
-  return 1;
+        IINCHIP_ISR_ENABLE();                       // Interrupt Service Routine Enable
+        return 1;
 }
 /**
 @brief  This function reads the value from W5200 registers.
 */
 uint8 IINCHIP_READ(uint16 addr)
 {
-  uint8 data;
-        
-  IINCHIP_ISR_DISABLE();                       // Interrupt Service Routine Disable
-  
-  IINCHIP_CSoff();                             // CS=0, SPI start
-  
-  IINCHIP_SpiSendData((addr & 0xFF00) >> 8);   // Address byte 1
-  IINCHIP_SpiSendData(addr & 0x00FF);          // Address byte 2
-  IINCHIP_SpiSendData(0x00);                   // Data read command and Read data length 1
-  IINCHIP_SpiSendData(0x01);                   // Read data length 2    
-  data = IINCHIP_SpiSendData(0x00);            // Data read (read 1byte data)
-  
-  IINCHIP_CSon();                              // CS=1,  SPI end
-  
-  IINCHIP_ISR_ENABLE();                        // Interrupt Service Routine Enable
-  return data;
+        uint8 data;
+
+        IINCHIP_ISR_DISABLE();                       // Interrupt Service Routine Disable
+
+        IINCHIP_CSoff();                             // CS=0, SPI start
+
+        IINCHIP_SpiSendData((addr & 0xFF00) >> 8);   // Address byte 1
+        IINCHIP_SpiSendData(addr & 0x00FF);          // Address byte 2
+        IINCHIP_SpiSendData(0x00);                   // Data read command and Read data length 1
+        IINCHIP_SpiSendData(0x01);                   // Read data length 2
+        data = IINCHIP_SpiSendData(0x00);            // Data read (read 1byte data)
+
+        IINCHIP_CSon();                              // CS=1,  SPI end
+
+        IINCHIP_ISR_ENABLE();                        // Interrupt Service Routine Enable
+        return data;
 }
 
 /**
 @brief  This function writes into W5200 memory(Buffer)
-*/ 
-uint16 IINCHIP_WRITE_BLOCK(uint16 addr,uint8* buf,uint16 len)
+*/
+uint16 IINCHIP_WRITE_BLOCK(uint16 addr, uint8* buf, uint16 len)
 {
-  uint16 idx = 0;
+        uint16 idx = 0;
 
-  if(len == 0)
-    return 0;
+        if(len == 0) {
+                return 0;
+        }
 
-  IINCHIP_ISR_DISABLE();
+        IINCHIP_ISR_DISABLE();
 
-  //SPI MODE I/F
-  IINCHIP_CSoff();                                        // CS=0, SPI start 
-  
-  IINCHIP_SpiSendData(((addr+idx) & 0xFF00) >> 8);        // Address byte 1
-  IINCHIP_SpiSendData((addr+idx) & 0x00FF);               // Address byte 2
-  IINCHIP_SpiSendData((0x80 | ((len & 0x7F00) >> 8)));    // Data write command and Write data length 1
-  IINCHIP_SpiSendData((len & 0x00FF));                    // Write data length 2
-  for(idx = 0; idx < len; idx++)                          // Write data in loop
-  {   
-    IINCHIP_SpiSendData(buf[idx]);
-  }
-  
-  IINCHIP_CSon();                                         // CS=1, SPI end 
-        
-  IINCHIP_ISR_ENABLE();                                   // Interrupt Service Routine Enable        
-  return len;
+        //SPI MODE I/F
+        IINCHIP_CSoff();                                        // CS=0, SPI start
+
+        IINCHIP_SpiSendData(((addr + idx) & 0xFF00) >> 8);      // Address byte 1
+        IINCHIP_SpiSendData((addr + idx) & 0x00FF);             // Address byte 2
+        IINCHIP_SpiSendData((0x80 | ((len & 0x7F00) >> 8)));    // Data write command and Write data length 1
+        IINCHIP_SpiSendData((len & 0x00FF));                    // Write data length 2
+        for(idx = 0; idx < len; idx++) {                        // Write data in loop
+                IINCHIP_SpiSendData(buf[idx]);
+        }
+
+        IINCHIP_CSon();                                         // CS=1, SPI end
+
+        IINCHIP_ISR_ENABLE();                                   // Interrupt Service Routine Enable
+        return len;
 }
 
 
 /**
 @brief  This function reads into W5200 memory(Buffer)
-*/ 
-uint16 IINCHIP_READ_BLOCK(uint16 addr, uint8* buf,uint16 len)
+*/
+uint16 IINCHIP_READ_BLOCK(uint16 addr, uint8* buf, uint16 len)
 {
-  uint16 idx = 0;
-        
-  IINCHIP_ISR_DISABLE();                                  // Interrupt Service Routine Disable
-        
-  IINCHIP_CSoff();                                        // CS=0, SPI start 
-        
-  IINCHIP_SpiSendData(((addr+idx) & 0xFF00) >> 8);        // Address byte 1
-  IINCHIP_SpiSendData((addr+idx) & 0x00FF);               // Address byte 2
-  IINCHIP_SpiSendData((0x00 | ((len & 0x7F00) >> 8)));    // Data read command
-  IINCHIP_SpiSendData((len & 0x00FF));            
+        uint16 idx = 0;
 
-  for(idx = 0; idx < len; idx++)                          // Read data in loop
-  {
-    buf[idx] = IINCHIP_SpiSendData(0x00);
-    
-  }
-        
-  IINCHIP_CSon();                                         // CS=0, SPI end      
-        
-  IINCHIP_ISR_ENABLE();                                   // Interrupt Service Routine Enable
-  return len;
+        IINCHIP_ISR_DISABLE();                                  // Interrupt Service Routine Disable
+
+        IINCHIP_CSoff();                                        // CS=0, SPI start
+
+        IINCHIP_SpiSendData(((addr + idx) & 0xFF00) >> 8);      // Address byte 1
+        IINCHIP_SpiSendData((addr + idx) & 0x00FF);             // Address byte 2
+        IINCHIP_SpiSendData((0x00 | ((len & 0x7F00) >> 8)));    // Data read command
+        IINCHIP_SpiSendData((len & 0x00FF));
+
+        for(idx = 0; idx < len; idx++) {                        // Read data in loop
+                buf[idx] = IINCHIP_SpiSendData(0x00);
+
+        }
+
+        IINCHIP_CSon();                                         // CS=0, SPI end
+
+        IINCHIP_ISR_ENABLE();                                   // Interrupt Service Routine Enable
+        return len;
 }
 
 
 /**
 @brief  This function sets up gateway IP address.
-*/ 
+*/
 void setGAR(
-  uint8 * addr  /**< a pointer to a 4 -byte array responsible to set the Gateway IP address. */
-  )
+        uint8 * addr  /**< a pointer to a 4 -byte array responsible to set the Gateway IP address. */
+)
 {
-  IINCHIP_WRITE((GAR0 + 0),addr[0]);
-  IINCHIP_WRITE((GAR0 + 1),addr[1]);
-  IINCHIP_WRITE((GAR0 + 2),addr[2]);
-  IINCHIP_WRITE((GAR0 + 3),addr[3]);
+        IINCHIP_WRITE((GAR0 + 0), addr[0]);
+        IINCHIP_WRITE((GAR0 + 1), addr[1]);
+        IINCHIP_WRITE((GAR0 + 2), addr[2]);
+        IINCHIP_WRITE((GAR0 + 3), addr[3]);
 }
 
 /*
@@ -210,44 +209,44 @@ void getGWIP(uint8 * addr)
 
 /**
 @brief  It sets up SubnetMask address
-*/ 
+*/
 void setSUBR(
-  uint8 * addr  /**< a pointer to a 4 -byte array responsible to set the SubnetMask address */
-  )
+        uint8 * addr  /**< a pointer to a 4 -byte array responsible to set the SubnetMask address */
+)
 {
-  IINCHIP_WRITE((SUBR0 + 0),addr[0]);
-  IINCHIP_WRITE((SUBR0 + 1),addr[1]);
-  IINCHIP_WRITE((SUBR0 + 2),addr[2]);
-  IINCHIP_WRITE((SUBR0 + 3),addr[3]);
+        IINCHIP_WRITE((SUBR0 + 0), addr[0]);
+        IINCHIP_WRITE((SUBR0 + 1), addr[1]);
+        IINCHIP_WRITE((SUBR0 + 2), addr[2]);
+        IINCHIP_WRITE((SUBR0 + 3), addr[3]);
 }
 
 
 /**
 @brief  This function sets up MAC address.
-*/ 
+*/
 void setSHAR(
-  uint8 * addr  /**< a pointer to a 6 -byte array responsible to set the MAC address. */
-  )
+        uint8 * addr  /**< a pointer to a 6 -byte array responsible to set the MAC address. */
+)
 {
-  IINCHIP_WRITE((SHAR0 + 0),addr[0]);
-  IINCHIP_WRITE((SHAR0 + 1),addr[1]);
-  IINCHIP_WRITE((SHAR0 + 2),addr[2]);
-  IINCHIP_WRITE((SHAR0 + 3),addr[3]);
-  IINCHIP_WRITE((SHAR0 + 4),addr[4]);
-  IINCHIP_WRITE((SHAR0 + 5),addr[5]);
+        IINCHIP_WRITE((SHAR0 + 0), addr[0]);
+        IINCHIP_WRITE((SHAR0 + 1), addr[1]);
+        IINCHIP_WRITE((SHAR0 + 2), addr[2]);
+        IINCHIP_WRITE((SHAR0 + 3), addr[3]);
+        IINCHIP_WRITE((SHAR0 + 4), addr[4]);
+        IINCHIP_WRITE((SHAR0 + 5), addr[5]);
 }
 
 /**
 @brief  This function sets up Source IP address.
 */
 void setSIPR(
-  uint8 * addr  /**< a pointer to a 4 -byte array responsible to set the Source IP address. */
-  )
+        uint8 * addr  /**< a pointer to a 4 -byte array responsible to set the Source IP address. */
+)
 {
-  IINCHIP_WRITE((SIPR0 + 0),addr[0]);
-  IINCHIP_WRITE((SIPR0 + 1),addr[1]);
-  IINCHIP_WRITE((SIPR0 + 2),addr[2]);
-  IINCHIP_WRITE((SIPR0 + 3),addr[3]);
+        IINCHIP_WRITE((SIPR0 + 0), addr[0]);
+        IINCHIP_WRITE((SIPR0 + 1), addr[1]);
+        IINCHIP_WRITE((SIPR0 + 2), addr[2]);
+        IINCHIP_WRITE((SIPR0 + 3), addr[3]);
 }
 
 /**
@@ -255,38 +254,38 @@ void setSIPR(
 */
 void getGAR(uint8 * addr)
 {
-  addr[0] = IINCHIP_READ(GAR0);
-  addr[1] = IINCHIP_READ(GAR0+1);
-  addr[2] = IINCHIP_READ(GAR0+2);
-  addr[3] = IINCHIP_READ(GAR0+3);
+        addr[0] = IINCHIP_READ(GAR0);
+        addr[1] = IINCHIP_READ(GAR0 + 1);
+        addr[2] = IINCHIP_READ(GAR0 + 2);
+        addr[3] = IINCHIP_READ(GAR0 + 3);
 }
 void getSUBR(uint8 * addr)
 {
-  addr[0] = IINCHIP_READ(SUBR0);
-  addr[1] = IINCHIP_READ(SUBR0+1);
-  addr[2] = IINCHIP_READ(SUBR0+2);
-  addr[3] = IINCHIP_READ(SUBR0+3);
+        addr[0] = IINCHIP_READ(SUBR0);
+        addr[1] = IINCHIP_READ(SUBR0 + 1);
+        addr[2] = IINCHIP_READ(SUBR0 + 2);
+        addr[3] = IINCHIP_READ(SUBR0 + 3);
 }
 void getSHAR(uint8 * addr)
 {
-  addr[0] = IINCHIP_READ(SHAR0);
-  addr[1] = IINCHIP_READ(SHAR0+1);
-  addr[2] = IINCHIP_READ(SHAR0+2);
-  addr[3] = IINCHIP_READ(SHAR0+3);
-  addr[4] = IINCHIP_READ(SHAR0+4);
-  addr[5] = IINCHIP_READ(SHAR0+5);
+        addr[0] = IINCHIP_READ(SHAR0);
+        addr[1] = IINCHIP_READ(SHAR0 + 1);
+        addr[2] = IINCHIP_READ(SHAR0 + 2);
+        addr[3] = IINCHIP_READ(SHAR0 + 3);
+        addr[4] = IINCHIP_READ(SHAR0 + 4);
+        addr[5] = IINCHIP_READ(SHAR0 + 5);
 }
 void getSIPR(uint8 * addr)
 {
-  addr[0] = IINCHIP_READ(SIPR0);
-  addr[1] = IINCHIP_READ(SIPR0+1);
-  addr[2] = IINCHIP_READ(SIPR0+2);
-  addr[3] = IINCHIP_READ(SIPR0+3);
+        addr[0] = IINCHIP_READ(SIPR0);
+        addr[1] = IINCHIP_READ(SIPR0 + 1);
+        addr[2] = IINCHIP_READ(SIPR0 + 2);
+        addr[3] = IINCHIP_READ(SIPR0 + 3);
 }
 
 void setMR(uint8 val)
 {
-  IINCHIP_WRITE(MR,val);
+        IINCHIP_WRITE(MR, val);
 }
 
 /**
@@ -294,35 +293,35 @@ void setMR(uint8 val)
  */
 uint8 getIR( void )
 {
-   return IINCHIP_READ(IR);
+        return IINCHIP_READ(IR);
 }
 
 
 /**
- Retransmittion 
+ Retransmittion
  **/
- 
+
 /**
 @brief  This function sets up Retransmission time.
 
-If there is no response from the peer or delay in response then retransmission 
+If there is no response from the peer or delay in response then retransmission
 will be there as per RTR (Retry Time-value Register)setting
 */
 void setRTR(uint16 timeout)
 {
-  IINCHIP_WRITE(RTR,(uint8)((timeout & 0xff00) >> 8));
-  IINCHIP_WRITE((RTR + 1),(uint8)(timeout & 0x00ff));
+        IINCHIP_WRITE(RTR, (uint8)((timeout & 0xff00) >> 8));
+        IINCHIP_WRITE((RTR + 1), (uint8)(timeout & 0x00ff));
 }
 
 /**
 @brief  This function set the number of Retransmission.
 
-If there is no response from the peer or delay in response then recorded time 
+If there is no response from the peer or delay in response then recorded time
 as per RTR & RCR register seeting then time out will occur.
 */
 void setRCR(uint8 retry)
 {
-  IINCHIP_WRITE(RCR,retry);
+        IINCHIP_WRITE(RCR, retry);
 }
 
 
@@ -336,7 +335,7 @@ set in IR register.
 */
 void setIMR(uint8 mask)
 {
-  IINCHIP_WRITE(IMR,mask); // must be setted 0x10.
+        IINCHIP_WRITE(IMR, mask); // must be setted 0x10.
 }
 
 /**
@@ -344,13 +343,13 @@ void setIMR(uint8 mask)
 */
 void setSn_MSS(SOCKET s, uint16 Sn_MSSR0)
 {
-  IINCHIP_WRITE(Sn_MSSR0(s),(uint8)((Sn_MSSR0 & 0xff00) >> 8));
-  IINCHIP_WRITE((Sn_MSSR0(s) + 1),(uint8)(Sn_MSSR0 & 0x00ff));
+        IINCHIP_WRITE(Sn_MSSR0(s), (uint8)((Sn_MSSR0 & 0xff00) >> 8));
+        IINCHIP_WRITE((Sn_MSSR0(s) + 1), (uint8)(Sn_MSSR0 & 0x00ff));
 }
 
 void setSn_TTL(SOCKET s, uint8 ttl)
 {
-   IINCHIP_WRITE(Sn_TTL(s), ttl);
+        IINCHIP_WRITE(Sn_TTL(s), ttl);
 }
 
 
@@ -360,7 +359,7 @@ void setSn_TTL(SOCKET s, uint8 ttl)
 */
 void setSn_PROTO(SOCKET s, uint8 proto)
 {
-  IINCHIP_WRITE(Sn_PROTO(s),proto);
+        IINCHIP_WRITE(Sn_PROTO(s), proto);
 }
 
 
@@ -371,7 +370,7 @@ These below functions are used to read the Interrupt & Soket Status register
 */
 uint8 getSn_IR(SOCKET s)
 {
-   return IINCHIP_READ(Sn_IR(s));
+        return IINCHIP_READ(Sn_IR(s));
 }
 
 
@@ -380,7 +379,7 @@ uint8 getSn_IR(SOCKET s)
 */
 uint8 getSn_SR(SOCKET s)
 {
-   return IINCHIP_READ(Sn_SR(s));
+        return IINCHIP_READ(Sn_SR(s));
 }
 
 
@@ -392,40 +391,36 @@ User shuold check this value first and control the size of transmitting data
 */
 uint16 getSn_TX_FSR(SOCKET s)
 {
-  uint16 val=0,val1=0;
-  do
-  {
-    val1 = IINCHIP_READ(Sn_TX_FSR0(s));
-    val1 = (val1 << 8) + IINCHIP_READ(Sn_TX_FSR0(s) + 1);
-      if (val1 != 0)
-    {
-        val = IINCHIP_READ(Sn_TX_FSR0(s));
-        val = (val << 8) + IINCHIP_READ(Sn_TX_FSR0(s) + 1);
-    }
-  } while (val != val1);
-   return val;
+        uint16 val = 0, val1 = 0;
+        do {
+                val1 = IINCHIP_READ(Sn_TX_FSR0(s));
+                val1 = (val1 << 8) + IINCHIP_READ(Sn_TX_FSR0(s) + 1);
+                if (val1 != 0) {
+                        val = IINCHIP_READ(Sn_TX_FSR0(s));
+                        val = (val << 8) + IINCHIP_READ(Sn_TX_FSR0(s) + 1);
+                }
+        } while (val != val1);
+        return val;
 }
 
 
 /**
 @brief   get socket RX recv buf size
 
-This gives size of received data in receive buffer. 
+This gives size of received data in receive buffer.
 */
 uint16 getSn_RX_RSR(SOCKET s)
 {
-  uint16 val=0,val1=0;
-  do
-  {
-    val1 = IINCHIP_READ(Sn_RX_RSR0(s));
-    val1 = (val1 << 8) + IINCHIP_READ(Sn_RX_RSR0(s) + 1);
-      if(val1 != 0)
-    {
-        val = IINCHIP_READ(Sn_RX_RSR0(s));
-        val = (val << 8) + IINCHIP_READ(Sn_RX_RSR0(s) + 1);
-    }
-  } while (val != val1);
-   return val;
+        uint16 val = 0, val1 = 0;
+        do {
+                val1 = IINCHIP_READ(Sn_RX_RSR0(s));
+                val1 = (val1 << 8) + IINCHIP_READ(Sn_RX_RSR0(s) + 1);
+                if(val1 != 0) {
+                        val = IINCHIP_READ(Sn_RX_RSR0(s));
+                        val = (val << 8) + IINCHIP_READ(Sn_RX_RSR0(s) + 1);
+                }
+        } while (val != val1);
+        return val;
 }
 
 
@@ -442,37 +437,35 @@ the Tx memory uper-bound of socket.
 */
 void send_data_processing(SOCKET s, uint8 *data, uint16 len)
 {
-  
-  uint16 ptr;
-  uint16 size;
-  uint16 dst_mask;
-  uint8 * dst_ptr;
 
-  ptr = IINCHIP_READ(Sn_TX_WR0(s));
-  ptr = (ptr << 8) + IINCHIP_READ(Sn_TX_WR0(s) + 1);
+        uint16 ptr;
+        uint16 size;
+        uint16 dst_mask;
+        uint8 * dst_ptr;
 
-  dst_mask = (uint32)ptr & getIINCHIP_TxMASK(s);
-  dst_ptr = (uint8 *)(getIINCHIP_TxBASE(s) + dst_mask);
-  
-  if (dst_mask + len > getIINCHIP_TxMAX(s)) 
-  {
-    size = getIINCHIP_TxMAX(s) - dst_mask;
-    IINCHIP_WRITE_BLOCK((uint32)dst_ptr, (uint8*)data, size);
-    data += size;
-    size = len - size;
-    dst_ptr = (uint8 *)(getIINCHIP_TxBASE(s));
-    IINCHIP_WRITE_BLOCK((uint32)dst_ptr, (uint8*)data, size);
-  } 
-  else
-  {
-    IINCHIP_WRITE_BLOCK((uint32)dst_ptr, (uint8*)data, len);
-  }
+        ptr = IINCHIP_READ(Sn_TX_WR0(s));
+        ptr = (ptr << 8) + IINCHIP_READ(Sn_TX_WR0(s) + 1);
 
-  ptr += len;
+        dst_mask = (uint32)ptr & getIINCHIP_TxMASK(s);
+        dst_ptr = (uint8 *)(getIINCHIP_TxBASE(s) + dst_mask);
 
-  IINCHIP_WRITE(Sn_TX_WR0(s),(uint8)((ptr & 0xff00) >> 8));
-  IINCHIP_WRITE((Sn_TX_WR0(s) + 1),(uint8)(ptr & 0x00ff));
-  
+        if (dst_mask + len > getIINCHIP_TxMAX(s)) {
+                size = getIINCHIP_TxMAX(s) - dst_mask;
+                IINCHIP_WRITE_BLOCK((uint32)dst_ptr, (uint8*)data, size);
+                data += size;
+                size = len - size;
+                dst_ptr = (uint8 *)(getIINCHIP_TxBASE(s));
+                IINCHIP_WRITE_BLOCK((uint32)dst_ptr, (uint8*)data, size);
+        }
+        else {
+                IINCHIP_WRITE_BLOCK((uint32)dst_ptr, (uint8*)data, len);
+        }
+
+        ptr += len;
+
+        IINCHIP_WRITE(Sn_TX_WR0(s), (uint8)((ptr & 0xff00) >> 8));
+        IINCHIP_WRITE((Sn_TX_WR0(s) + 1), (uint8)(ptr & 0x00ff));
+
 }
 
 
@@ -488,36 +481,34 @@ the Rx memory uper-bound of socket.
 */
 void recv_data_processing(SOCKET s, uint8 *data, uint16 len)
 {
-  uint16 ptr;
-  uint16 size;
-  uint16 src_mask;
-  uint8 * src_ptr;
+        uint16 ptr;
+        uint16 size;
+        uint16 src_mask;
+        uint8 * src_ptr;
 
-  ptr = IINCHIP_READ(Sn_RX_RD0(s));
-  ptr = ((ptr & 0x00ff) << 8) + IINCHIP_READ(Sn_RX_RD0(s) + 1);
-  
+        ptr = IINCHIP_READ(Sn_RX_RD0(s));
+        ptr = ((ptr & 0x00ff) << 8) + IINCHIP_READ(Sn_RX_RD0(s) + 1);
+
 #ifdef __DEF_IINCHIP_DBG__
-  printf(" ISR_RX: rd_ptr : %.4x\r\n", ptr);
+        printf(" ISR_RX: rd_ptr : %.4x\r\n", ptr);
 #endif
 
-  src_mask = (uint32)ptr & getIINCHIP_RxMASK(s);
-  src_ptr = (uint8 *)(getIINCHIP_RxBASE(s) + src_mask);
-  
-  if( (src_mask + len) > getIINCHIP_RxMAX(s) ) 
-  {
-    size = getIINCHIP_RxMAX(s) - src_mask;
-    IINCHIP_READ_BLOCK((uint32)src_ptr, (uint8*)data,size);
-    data += size;
-    size = len - size;
-    src_ptr = (uint8 *)(getIINCHIP_RxBASE(s));
-    IINCHIP_READ_BLOCK((uint32)src_ptr, (uint8*) data,size);
-  } 
-  else
-  {
-    IINCHIP_READ_BLOCK((uint32)src_ptr, (uint8*) data,len);
-  }
-    
-  ptr += len;
-  IINCHIP_WRITE(Sn_RX_RD0(s),(uint8)((ptr & 0xff00) >> 8));
-  IINCHIP_WRITE((Sn_RX_RD0(s) + 1),(uint8)(ptr & 0x00ff));
+        src_mask = (uint32)ptr & getIINCHIP_RxMASK(s);
+        src_ptr = (uint8 *)(getIINCHIP_RxBASE(s) + src_mask);
+
+        if( (src_mask + len) > getIINCHIP_RxMAX(s) ) {
+                size = getIINCHIP_RxMAX(s) - src_mask;
+                IINCHIP_READ_BLOCK((uint32)src_ptr, (uint8*)data, size);
+                data += size;
+                size = len - size;
+                src_ptr = (uint8 *)(getIINCHIP_RxBASE(s));
+                IINCHIP_READ_BLOCK((uint32)src_ptr, (uint8*) data, size);
+        }
+        else {
+                IINCHIP_READ_BLOCK((uint32)src_ptr, (uint8*) data, len);
+        }
+
+        ptr += len;
+        IINCHIP_WRITE(Sn_RX_RD0(s), (uint8)((ptr & 0xff00) >> 8));
+        IINCHIP_WRITE((Sn_RX_RD0(s) + 1), (uint8)(ptr & 0x00ff));
 }

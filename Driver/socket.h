@@ -1,7 +1,7 @@
 /*
 *
 @file		socket.h
-@brief	define function of socket API 
+@brief	define function of socket API
 *
 */
 
@@ -38,12 +38,12 @@
 
 typedef struct _wiz_NetInfo
 {
-	uint8 Mac[6];
-	uint8 IP[4];
-	uint8 Subnet[4];
-	uint8 Gateway[4];
-	uint8 DNSServerIP[4];
-	uint8 DHCPEnable;
+        uint8 Mac[6];
+        uint8 IP[4];
+        uint8 Subnet[4];
+        uint8 Gateway[4];
+        uint8 DNSServerIP[4];
+        uint8 DHCPEnable;
 
 } wiz_NetInfo;
 

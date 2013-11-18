@@ -5,12 +5,12 @@
 #define	_W5200_H_
 
 #define WINDOWFULL_FLAG_ON 1
-#define WINDOWFULL_FLAG_OFF 0 
+#define WINDOWFULL_FLAG_OFF 0
 #define WINDOWFULL_MAX_RETRY_NUM 3
 #define WINDOWFULL_WAIT_TIME 1000
 
 #include "Types.h"
-#define MR				(COMMON_BASE + 0x0000) 
+#define MR				(COMMON_BASE + 0x0000)
 /**
  @brief Gateway IP Register address
  */
@@ -34,7 +34,7 @@
 /**
  @brief Socket Interrupt Register
  */
-#define IR2				(COMMON_BASE + 0x0034) 
+#define IR2				(COMMON_BASE + 0x0034)
 /**
  @brief PHY Status Register
  */
@@ -71,7 +71,7 @@
 /**
  @brief chip version register address
  */
-#define VERSIONR			(COMMON_BASE + 0x001F)   
+#define VERSIONR			(COMMON_BASE + 0x001F)
 /**
  @brief Unreachable IP register address in UDP mode
  */
@@ -134,12 +134,12 @@
  */
 #define Sn_PROTO(ch)			(CH_BASE + ch * CH_SIZE + 0x0014)
 
-/** 
- @brief IP Type of Service(TOS) Register 
+/**
+ @brief IP Type of Service(TOS) Register
  */
 #define Sn_TOS(ch)			(CH_BASE + ch * CH_SIZE + 0x0015)
 /**
- @brief IP Time to live(TTL) Register 
+ @brief IP Time to live(TTL) Register
  */
 #define Sn_TTL(ch)			(CH_BASE + ch * CH_SIZE + 0x0016)
 /**
@@ -225,18 +225,18 @@
 #define Sn_CR_RECV		0x40		/**< update rxbuf pointer, recv data */
 
 #ifdef __DEF_IINCHIP_PPP__
-	#define Sn_CR_PCON		0x23		 
-	#define Sn_CR_PDISCON		0x24		 
-	#define Sn_CR_PCR		0x25		 
-	#define Sn_CR_PCN		0x26		
-	#define Sn_CR_PCJ		0x27		
+#define Sn_CR_PCON		0x23
+#define Sn_CR_PDISCON		0x24
+#define Sn_CR_PCR		0x25
+#define Sn_CR_PCN		0x26
+#define Sn_CR_PCJ		0x27
 #endif
 
 /* Sn_IR values */
 #ifdef __DEF_IINCHIP_PPP__
-	#define Sn_IR_PRECV		0x80		
-	#define Sn_IR_PFAIL		0x40		
-	#define Sn_IR_PNEXT		0x20		
+#define Sn_IR_PRECV		0x80
+#define Sn_IR_PFAIL		0x40
+#define Sn_IR_PNEXT		0x20
 #endif
 #define Sn_IR_SEND_OK			0x10		/**< complete sending */
 #define Sn_IR_TIMEOUT			0x08		/**< assert timeout */
@@ -276,8 +276,8 @@
 /*********************************************************
 * iinchip access function
 *********************************************************/
-uint8 IINCHIP_READ(uint16 addr); 
-uint8 IINCHIP_WRITE(uint16 addr,uint8 data);
+uint8 IINCHIP_READ(uint16 addr);
+uint8 IINCHIP_WRITE(uint16 addr, uint8 data);
 
 uint8 getISR(uint8 s);
 void putISR(uint8 s, uint8 val);
@@ -291,7 +291,7 @@ uint16 getIINCHIP_TxBASE(uint8 s);
 void setMR(uint8 val);
 void setRTR(uint16 timeout); // set retry duration for data transmission, connection, closing ...
 void setRCR(uint8 retry); // set retry count (above the value, assert timeout interrupt)
-void setIMR(uint8 mask); // set interrupt mask. 
+void setIMR(uint8 mask); // set interrupt mask.
 uint8 getIR( void );
 void setSn_MSS(SOCKET s, uint16 Sn_MSSR0); // set maximum segment size
 void setSn_PROTO(SOCKET s, uint8 proto); // set IP Protocol value using IP-Raw mode
